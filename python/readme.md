@@ -31,3 +31,5 @@ different model scenarios.
 The script mass_elemratio_plot.py plots the mass and elemental ratios for two sets of scenarios. The script produces a plot that looks
 like the following: ![mass and elemental ratios](sc1and2_mass_elemratio_comp.png)
 
+The internal distribution of species in the aerosol can also be plotted using contour_presentation.py. The script produces a plot of the O/C ratio inside the aerosol that looks like the following: ![contour](OC_ratio_contour_sc1.png)
+
