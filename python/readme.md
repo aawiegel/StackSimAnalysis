@@ -29,5 +29,5 @@ different model scenarios.
 ### Example plots
 
 The script mass_elemratio_plot.py plots the mass and elemental ratios for two sets of scenarios. The script produces a plot that looks
-like the following: ![mass and elemental ratios](https://github.com/aawiegel/StackSimAnalysis/python/sc1and2_mass_elemratio_comp.tif)
+like the following: ![mass and elemental ratios](/sc1and2_mass_elemratio_comp.png)
 
