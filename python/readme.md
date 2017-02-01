@@ -6,7 +6,7 @@ The code can pull out average properties of the aerosol or provide contour maps 
 
 ## Quick start
 
-Run Triacontane_scenarioplot.py to load the data, and then any plotting script (e.g., contour_presentation.py).
+Use the Jupyter notebook Postprocessing.ipynb to see how the postprocessing data analysis works with graphs of each scenario.
 
 ## Files
 
