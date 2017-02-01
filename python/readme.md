@@ -2,7 +2,7 @@
 
 These scripts have been developed to analyze data from Kinetiscope simulations exported as XML. 
 The simulations are a stack of rectangular prisms used to represent a radial core of a spherical aerosol nanoparticle.
-The code can pull out average properties of the aerosol or provide contour maps of the internal distribution. See the rendered Jupyter notebook using [nbviewer](http://nbviewer.jupyter.org/github/aawiegel/StackSimAnalysis/blob/master/python/Postprocessing.html).
+The code can pull out average properties of the aerosol or provide contour maps of the internal distribution. 
 
 ## Quick start
 
