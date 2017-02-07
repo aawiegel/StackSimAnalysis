@@ -2,7 +2,7 @@
 
 These scripts have been developed to analyze data from Kinetiscope simulations exported as XML. 
 The simulations are a stack of rectangular prisms used to represent a radial core of a spherical aerosol nanoparticle.
-The code can pull out average properties of the aerosol or provide contour maps of the internal distribution. 
+The code can pull out average properties of the aerosol or provide contour maps of the internal distribution. The following graphic gives an overview of the simulation. ![](overview graphic.png)
 
 ## Quick start
 
@@ -19,17 +19,7 @@ a list of species associated with oxygen atoms and a list of species associated 
 summed. Then, the ratio of oxygen to carbon atoms in the aerosol can be calculated to be compared to aerosol
 mass spectometer data.
 
-### Triacontane_scenarioplot.py
+### Postprocessing.ipynb
 
-This script imports StackSim and then loads in scenario data from a dictionary that contains the scenario names and 
-file names. Then, the data is preprocessed by applying radial corrections to various species to account for the change
-in simulation geometry. The preprocessed data is then available in a dictionary for easy access and comparison between
-different model scenarios.
-
-### Example plots
-
-The script mass_elemratio_plot.py plots the mass and elemental ratios for two sets of scenarios. The script produces a plot that looks
-like the following: ![mass and elemental ratios](sc1and2_mass_elemratio_comp.png)
-
-The internal distribution of species in the aerosol can also be plotted using contour_presentation.py. The script produces a plot of the O/C ratio inside the aerosol that looks like the following: ![contour](OC_ratio_contour_sc1.png)
+This Jupyter notebook details the calculations used to process the data from the simulation XML files. Then, it graphs several relevant average properties from the simulation. Contour maps showing the internal distribution of the starting material, peroxy radicals, and O/C ratio are also found. Finally, the results are written to Excel files (not included in repository due to their size).
 
