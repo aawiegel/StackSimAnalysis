@@ -2,7 +2,7 @@
 
 These scripts have been developed to analyze data from Kinetiscope simulations exported as XML. 
 The simulations are a stack of rectangular prisms used to represent a radial core of a spherical aerosol nanoparticle.
-The code can pull out average properties of the aerosol or provide contour maps of the internal distribution. The following graphic gives an overview of the simulation. ![](overview graphic.png)
+The code can pull out average properties of the aerosol or provide contour maps of the internal distribution. The following graphic gives an overview of the simulation. ![](overview graphic.png) Additional details about the model simulations can be found in [this publication](http://pubs.rsc.org/en/content/articlelanding/2017/cp/c7cp00696a#!divAbstract).
 
 ## Quick start
 
@@ -23,3 +23,6 @@ mass spectometer data.
 
 This Jupyter notebook details the calculations used to process the data from the simulation XML files. Then, it graphs several relevant average properties from the simulation. Contour maps showing the internal distribution of the starting material, peroxy radicals, and O/C ratio are also found. Finally, the results are written to Excel files (not included in repository due to their size).
 
+## Model scenario descriptions
+
+Two main model scenarios considered are Scenario 1, Scenario 2, Scenario 1A, and Scenario 2A. Scenario 1 includes constant diffusion (derived from measurements of the bulk viscosity) and a gas phase OH + carboxyllic acid rate coefficient. Scenario 2 also has constant diffusion but an aqueous phase OH + carboxyllic acid rate coefficient. Model scenarios labeled with 'A' have the same chemistry, but a plasticization of the aerosol occurs when lower carbon number products (\<C16) form. More specifically, the diffusion coefficient increases by 5 orders of magnitude. 
