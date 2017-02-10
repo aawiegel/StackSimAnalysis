@@ -7,6 +7,7 @@ Created on Tue Jun 28 14:03:22 2016
 """
 import numpy as np
 import math
+import os
 from scipy import interpolate
 from xml.dom import minidom
 from matplotlib import ticker
@@ -23,6 +24,10 @@ class SimulationData:
         
         # Create empty dictionary of compartments
         self.compartments = dict()
+        
+        # Store simulation file name
+        
+        self.sim_file = os.path.basename(self.data_dom.getElementsByTagName("file")[0].firstChild.nodeValue)
         
         # Get number of compartments and number of time points
         self.num_compartments = int(self.data_dom.getElementsByTagName("num_compartments")[0].firstChild.nodeValue)
@@ -411,3 +416,96 @@ class Compartment:
         self.species[name][self.species[name] > 1E308] = 0
 
 
+
+
+def ProcessTriSimulation(file_dict, subdir):
+    """Convenience function for Triacontane simulations
+    Takes simulation file name dictionary and subdirectory 
+    and returns simulation object dictionary
+    With several average values already calculated"""
+    
+    # Create empty simulation dictionary
+    sim_dict = dict()
+    
+    # Generate lists for finding weighting aggregate species from individual
+    # functional group or carbon backbone species
+    
+    carbon_min, carbon_max = 1, 30
+    
+    missing_carbon_no = [1, 30]
+    
+    # Create carbon-30 lumped species from each component
+    
+    carbon_no_dict = {"nC30" : [["C30", 1], ["C30_COOH", 1], ["C30_COOH_O", 1], ["C30_HOOCCOOH", 1], ["C30_O2", 1], ["C30_O", 1]]}
+    
+    # Initialize list of lists
+    
+    carbon_list = [["nC30", 30]]
+    
+    for i in range(carbon_min, carbon_max+1, 1):
+        if i in missing_carbon_no:
+            pass
+        else:
+            no_C = "C"+str(i)
+            
+            # Add entry to lumped carbon number dictionary
+            carbon_no_dict["n"+no_C] = [[no_C, 1], [no_C+"_O2", 1], [no_C+"_COOH", 1], [no_C+"_COOH_O", 1], [no_C+"_HOOCCOOH", 1]]
+            
+            # Add entry to list of list for carbon number weighting
+            carbon_list.append(["n"+no_C, i])
+    
+    # Generate oxygen and hydrogen species weighting lists
+    
+    oxygen_list = [["OC_sec", 1], ["OCH_prim", 1], ["OHCH2_prim", 1], ["OHCH_sec", 1],
+                   ["OC_alpha", 1], ["OHCH_alpha", 1], ["HO_OOC_prim", 3],
+                   ["HOOCH2_prim", 2], ["HOOCH_alpha", 2], ["HOOCH_sec", 2], ["HOOC_prim", 2]]
+    
+    hydrogen_list = [["CH3_prim", 3], ["CH3_prim_s", 3], ["CH2_sec", 2], ["CH2_alpha", 2], 
+                     ["OCH_prim", 1], ["OHCH_sec", 2], ["OHCH2_prim", 3], ["OHCH_alpha", 2],
+                     ["HO_OOC_prim", 1], ["HOOCH2_prim", 3], ["HOOCH_alpha", 2], ["HOOCH_sec", 2], ["HOOC_prim", 1]]
+    
+    # Generate mass weighting lists
+    
+    mass_list = [["carbon", 12], ["oxygen", 16], ["hydrogen", 1]]
+    
+    mass_list_r = [["carbon_r", 12], ["oxygen_r", 16], ["hydrogen_r", 1]]
+    
+    for scenario in file_dict.keys():
+        
+        # Load and process simulation data from simulation    
+        sim_dict[scenario] = SimulationData(os.path.join(subdir, file_dict[scenario]))
+        
+        # Calculate aggregate carbon species and radial correction
+        for carbon_no in carbon_no_dict.keys():
+            sim_dict[scenario].calcAggregateSpecies(carbon_no, carbon_no_dict[carbon_no])
+            sim_dict[scenario].calcRadialCorrection(carbon_no, reverse_axis=True)
+        
+    
+        # Calculate each element and mass    
+        sim_dict[scenario].calcAggregateSpecies("carbon", carbon_list)
+    
+        sim_dict[scenario].calcAggregateSpecies("oxygen", oxygen_list)
+    
+        sim_dict[scenario].calcAggregateSpecies("hydrogen", hydrogen_list)     
+        
+        sim_dict[scenario].calcAggregateSpecies("mass", mass_list)
+        
+        # Calculate radial correction for each element and mass    
+        
+        sim_dict[scenario].calcRadialCorrection("mass", reverse_axis=True)
+        sim_dict[scenario].calcRadialCorrection("oxygen", reverse_axis=True)
+        sim_dict[scenario].calcRadialCorrection("carbon", reverse_axis=True)
+        sim_dict[scenario].calcRadialCorrection("hydrogen", reverse_axis=True)
+        
+        # Calculate radial correction for triacontane    
+        
+        sim_dict[scenario].calcRadialCorrection("Tri", reverse_axis=True)
+        
+        # Calculate mass of aerosol    
+        
+        sim_dict[scenario].calcAggregateSpecies("mass_r", mass_list_r)
+        
+        sim_dict[scenario].calcSpeciesRatio("O/C ratio", "oxygen_r", "carbon_r")
+        sim_dict[scenario].calcSpeciesRatio("H/C ratio", "hydrogen_r", "carbon_r")
+        
+    return sim_dict
