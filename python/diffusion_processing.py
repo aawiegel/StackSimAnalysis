@@ -196,42 +196,42 @@ for scenario in natsort.natsorted(files.keys()):
     
     # Summarize files
     summary.write('A1', scenario)
-    summary.write('B1', simulation.sim_file)
-    summary.write('A2', 'XML file')
+    summary.write('A2', simulation.sim_file)
+    summary.write('B1', 'XML file')
     summary.write('B2', files[scenario])
     
     # Write compartment dimensions
     comp = simulation.compartments[(0,0,0)]
     
-    summary.write('A3', 'x (cm)')
-    summary.write('B3', comp.dimensions["x"][0])
-    summary.write('A4', 'y (cm)')
-    summary.write('B4', comp.dimensions["y"][0])
-    summary.write('A5', 'z (cm)')
-    summary.write('B5', comp.dimensions["z"][0])
+    summary.write('C1', 'x (cm)')
+    summary.write('C2', comp.dimensions["x"][0])
+    summary.write('D1', 'y (cm)')
+    summary.write('D2', comp.dimensions["y"][0])
+    summary.write('E1', 'z (cm)')
+    summary.write('E2', comp.dimensions["z"][0])
     
     # Write initial diameter
-    summary.write('A6', 'Initial diameter (nm)')
-    summary.write('B6', diameter[0])
+    summary.write('F1', 'Initial diameter (nm)')
+    summary.write('F2', diameter[0])
     
     # Write OH concentration
     
-    summary.write('A7', 'OH concentration (molecules cm-3)')
-    summary.write('B7', OH)
+    summary.write('G1', 'OH concentration (molecules cm-3)')
+    summary.write('G2', OH)
     
     # Write diffusion coefficient
     
     D = scenario.split("_")[1]
     D = D_string_conv[D]
     
-    summary.write('A8', 'Diffusion coefficient (cm2 s-1)')
-    summary.write('B8', D)
+    summary.write('H1', 'Diffusion coefficient (cm2 s-1)')
+    summary.write('H2', D)
     
     # Write rate coefficient and uptake coefficient
-    summary.write('A9', 'Rate coefficient (cm3 molecules-1 s-1)')
-    summary.write('B9', k_het)
-    summary.write('A10', 'Effective Uptake')
-    summary.write('B10', eff_uptake)
+    summary.write('I1', 'Rate coefficient (cm3 molecules-1 s-1)')
+    summary.write('I2', k_het)
+    summary.write('J1', 'Effective Uptake')
+    summary.write('J2', eff_uptake)
     
     # Write average and contour data to separate sheets
     ScenarioData[scenario+" averages"].to_excel(writer, sheet_name='average data')
