@@ -20,49 +20,49 @@ class SimulationData:
     def __init__(self, xml_file):
     
         # Parse xml file
-        self.data_dom = minidom.parse(xml_file)
-        
-        # Create empty dictionary of compartments
-        self.compartments = dict()
-        
-        # Store simulation file name
-        
-        self.sim_file = os.path.basename(self.data_dom.getElementsByTagName("file")[0].firstChild.nodeValue)
-        
-        # Get number of compartments and number of time points
-        self.num_compartments = int(self.data_dom.getElementsByTagName("num_compartments")[0].firstChild.nodeValue)
-        self.num_points = int(self.data_dom.getElementsByTagName("num_points")[0].firstChild.nodeValue)
-        
-        # Get number of rows (y), columns (x), and layers (z).
-        self.num_rows = int(self.data_dom.getElementsByTagName("num_rows")[0].firstChild.nodeValue)
-        self.num_columns = int(self.data_dom.getElementsByTagName("num_columns")[0].firstChild.nodeValue)
-        self.num_layers = int(self.data_dom.getElementsByTagName("num_layers")[0].firstChild.nodeValue) 
-        
-        # Get time points
-        self.time = np.fromstring(self.data_dom.getElementsByTagName("time_points")[0].firstChild.nodeValue, sep=",")
-        
-        compt_elem_list = self.data_dom.getElementsByTagName("compartment")
-        
-        for compt_elem in compt_elem_list:
-            compt = Compartment(compt_elem)
-            self.compartments[compt.getComptCoordinates()] = compt
-
-        self.calcCartCoordinates()
-        
-  
-        # Initialize species dictionaries for sum of species and for contour of species
-        self.species = dict()
-        self.species_contour = dict()
-        
-        # Calculate sum of each species for whole simulation
-
-        for species in self.compartments[(0,0,0)].getSpeciesNameList():
-            self.calcSpeciesSum(species)
-        
-        # Initialize volume
-        self.volume = np.zeros_like(self.time)
+        with minidom.parse(xml_file) as data_dom:
             
-        self.calcSimulationVolume()
+            # Create empty dictionary of compartments
+            self.compartments = dict()
+            
+            # Store simulation file name
+            
+            self.sim_file = os.path.basename(data_dom.getElementsByTagName("file")[0].firstChild.nodeValue)
+            
+            # Get number of compartments and number of time points
+            self.num_compartments = int(data_dom.getElementsByTagName("num_compartments")[0].firstChild.nodeValue)
+            self.num_points = int(data_dom.getElementsByTagName("num_points")[0].firstChild.nodeValue)
+            
+            # Get number of rows (y), columns (x), and layers (z).
+            self.num_rows = int(data_dom.getElementsByTagName("num_rows")[0].firstChild.nodeValue)
+            self.num_columns = int(data_dom.getElementsByTagName("num_columns")[0].firstChild.nodeValue)
+            self.num_layers = int(data_dom.getElementsByTagName("num_layers")[0].firstChild.nodeValue) 
+            
+            # Get time points
+            self.time = np.fromstring(data_dom.getElementsByTagName("time_points")[0].firstChild.nodeValue, sep=",")
+            
+            compt_elem_list = data_dom.getElementsByTagName("compartment")
+            
+            for compt_elem in compt_elem_list:
+                compt = Compartment(compt_elem)
+                self.compartments[compt.getComptCoordinates()] = compt
+    
+            self.calcCartCoordinates()
+            
+      
+            # Initialize species dictionaries for sum of species and for contour of species
+            self.species = dict()
+            self.species_contour = dict()
+            
+            # Calculate sum of each species for whole simulation
+    
+            for species in self.compartments[(0,0,0)].getSpeciesNameList():
+                self.calcSpeciesSum(species)
+            
+            # Initialize volume
+            self.volume = np.zeros_like(self.time)
+                
+            self.calcSimulationVolume()
     
     def calcSpeciesSum(self, species_name):
         """Calculates sum of a species over the whole simulation"""
