@@ -151,6 +151,12 @@ for scenario in natsort.natsorted(files.keys()):
     mass_init = simulation.species["mass_r"][0]
     carbon_init = simulation.species["carbon_r"][0]
     
+    # Find total of functional groups
+    alcohols = simulation.species["OHCH2_prim"] + simulation.species["OHCH_alpha"] + \
+                    simulation.species["OHCH_sec"]
+    ketones = simulation.species["OC_sec"] + simulation.species["OC_alpha"]
+    
+    
     # Add average data to data frame
     new_data = {"Triacontane (normalized)" : simulation.species["Tri_r"]/tri_init,
                 "Mass (normalized)" : simulation.species["mass_r"]/mass_init,
@@ -159,7 +165,11 @@ for scenario in natsort.natsorted(files.keys()):
                 "Average Carbon" : simulation.species["carbon_r"]/carbon_init*30, 
                 "Average Oxygen" : simulation.species["oxygen_r"]/carbon_init*30, 
                 "H/C ratio" : simulation.species["H/C ratio"], 
-                "O/C ratio" : simulation.species["O/C ratio"]}
+                "O/C ratio" : simulation.species["O/C ratio"],
+                "Alcohols" : alcohols,
+                "Ketones" : ketones,
+                "Aldehydes" : simulation.species["OCH_prim"],
+                "Carboxyllic acids" : simulation.species["HOOC_prim"]}
 
     SimData = SimData.assign(**new_data)
     
