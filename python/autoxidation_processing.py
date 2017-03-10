@@ -47,11 +47,13 @@ files = dict()
 
 for cond in condition:
     for coefficient in diffusion:
-        if coefficient == 'D15' and cond == 'diurnal':
-            continue
+        
         
         filename = "tri_"+cond+"_"+coefficient+".xml"
         files[cond+"_"+coefficient] = filename
+        
+        if coefficient == 'D15' and cond == 'diurnal':
+            continue
         
         filename_ao = "tri_"+cond+"_ao_"+coefficient+".xml"
         files[cond+"_"+coefficient+"_ao"] = filename_ao
