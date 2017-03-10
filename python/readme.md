@@ -1,9 +1,3 @@
-## Python Code for data analysis
-
-These scripts have been developed to analyze data from Kinetiscope simulations exported as XML. 
-The simulations are a stack of rectangular prisms used to represent a radial core of a spherical aerosol nanoparticle.
-The code can pull out average properties of the aerosol or provide contour maps of the internal distribution. The following graphic gives an overview of the simulation. ![](overview graphic.png) Additional details about the model simulations can be found in [this publication](http://pubs.rsc.org/en/content/articlelanding/2017/cp/c7cp00696a#!divAbstract).
-
 ## Quick start
 
 Use the Jupyter notebook Postprocessing.ipynb to see how the postprocessing data analysis works with graphs of each scenario.
