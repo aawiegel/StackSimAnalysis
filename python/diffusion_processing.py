@@ -113,6 +113,7 @@ for scenario in natsort.natsorted(files.keys()):
     if not "SC" in scenario:
         last_cmpt = simulation.compartments[(0, simulation.num_rows-1, 0)]
         diameter = 2*(last_cmpt.positions["y"]+last_cmpt.dimensions["y"])/1E-7
+        stack_vs_sphere = 1
         
         # Calculate contour maps for each species
         simulation.calcContourInterpolated("Tri", reverse_axis = True)
@@ -128,6 +129,7 @@ for scenario in natsort.natsorted(files.keys()):
     else:
         volume = simulation.compartments[(0,0,0)].volume
         diameter = 2*(volume*3/4/np.pi)**(1/3)/1E-7
+        stack_vs_sphere = (1.31668E-6**2*2E-5)/volume
         
         # Create dummy contour maps
         Tri = np.empty((position_vector.size, OH_exp.size))
@@ -166,10 +168,10 @@ for scenario in natsort.natsorted(files.keys()):
                 "Average Oxygen" : simulation.species["oxygen_r"]/carbon_init*30, 
                 "H/C ratio" : simulation.species["H/C ratio"], 
                 "O/C ratio" : simulation.species["O/C ratio"],
-                "Alcohols" : alcohols,
-                "Ketones" : ketones,
-                "Aldehydes" : simulation.species["OCH_prim"],
-                "Carboxyllic acids" : simulation.species["HOOC_prim"]}
+                "Alcohols" : alcohols*stack_vs_sphere,
+                "Ketones" : ketones*stack_vs_sphere,
+                "Aldehydes" : simulation.species["OCH_prim"]*stack_vs_sphere,
+                "Carboxyllic acids" : simulation.species["HOOC_prim"]*stack_vs_sphere}
 
     SimData = SimData.assign(**new_data)
     

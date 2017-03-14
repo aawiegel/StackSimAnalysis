@@ -47,12 +47,11 @@ files = dict()
 
 for cond in condition:
     for coefficient in diffusion:
-        if coefficient == 'D15' and cond == 'diurnal':
-            continue
+        
         
         filename = "tri_"+cond+"_"+coefficient+".xml"
         files[cond+"_"+coefficient] = filename
-        
+                
         filename_ao = "tri_"+cond+"_ao_"+coefficient+".xml"
         files[cond+"_"+coefficient+"_ao"] = filename_ao
 
@@ -105,7 +104,8 @@ for scenario in natsort.natsorted(files.keys()):
     
     # Initialize data frame with time and reaction markers
     SimData = pd.DataFrame({"Time (s)" : simulation.time,
-                            "desorb" : simulation.species["desorb"],})
+                            "desorb" : simulation.species["desorb"],
+                            "RO2+RO2" : simulation.species["O2"]})
     
     # get additional markers from autoxidation simulations    
     if "ao" in scenario:
