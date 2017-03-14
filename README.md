@@ -8,5 +8,5 @@ The simulations are a stack of rectangular prisms used to represent a radial cor
 The code can pull out average properties of the aerosol or provide contour maps of the internal distribution.  Additional details about the model simulations can be found in [this publication](http://pubs.rsc.org/en/content/articlelanding/2017/cp/c7cp00696a#!divAbstract). The following graphic gives an overview of the simulation. 
 
 <p align="center">
-  <img src="/python/model summary.png" />
+  <img src="/python/overview graphic.png" />
 </p>
