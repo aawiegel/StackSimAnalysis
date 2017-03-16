@@ -113,7 +113,7 @@ for scenario in natsort.natsorted(files.keys()):
     if not "SC" in scenario:
         last_cmpt = simulation.compartments[(0, simulation.num_rows-1, 0)]
         diameter = 2*(last_cmpt.positions["y"]+last_cmpt.dimensions["y"])/1E-7
-        stack_vs_sphere = 1
+
         
         # Calculate contour maps for each species
         simulation.calcContourInterpolated("Tri", reverse_axis = True)
@@ -126,10 +126,33 @@ for scenario in natsort.natsorted(files.keys()):
                         simulation.species_contour["Tri"]/simulation.species_contour["Tri"][0,0],
                        "Peroxy radicals": simulation.species_contour["OO_sec"],
                        "O/C ratio": simulation.species_contour["O/C ratio"]}
+        
+        # Find radial correction for alcohol species
+        simulation.calcRadialCorrection("OHCH2_prim")
+        simulation.calcRadialCorrection("OHCH_alpha")
+        simulation.calcRadialCorrection("OHCH_sec")
+        
+        # Find total of alcohol groups
+        alcohols = simulation.species["OHCH2_prim_r"] + simulation.species["OHCH_alpha_r"] + \
+                        simulation.species["OHCH_sec_r"]
+                        
+        # Find radial correction for ketone species
+        simulation.calcRadialCorrection("OC_sec")
+        simulation.calcRadialCorrection("OC_alpha")
+        
+        # Find total of ketone groups
+        ketones = simulation.species["OC_sec_r"] + simulation.species["OC_alpha_r"]
+        
+        # Find radial correction for aldehydes and acids
+        simulation.calcRadialCorrection("OCH_prim")
+        simulation.calcRadialCorrection("HOOC_prim")
+        
+        aldehydes = simulation.species["OCH_prim_r"]
+        acids = simulation.species["HOOC_prim_r"]
     else:
         volume = simulation.compartments[(0,0,0)].volume
         diameter = 2*(volume*3/4/np.pi)**(1/3)/1E-7
-        stack_vs_sphere = (1.31668E-6**2*2E-5)/volume
+
         
         # Create dummy contour maps
         Tri = np.empty((position_vector.size, OH_exp.size))
@@ -142,6 +165,16 @@ for scenario in natsort.natsorted(files.keys()):
         contour_data = {"Triacontane (normalized)" : Tri,
                        "Peroxy radicals" : Peroxy,
                        "O/C ratio" : OC_ratio}
+        
+        # Find total of alcohol groups
+        alcohols = simulation.species["OHCH2_prim"] + simulation.species["OHCH_alpha"] + \
+                        simulation.species["OHCH_sec"]
+                        
+        # Find total of ketone groups
+        ketones = simulation.species["OC_sec"] + simulation.species["OC_alpha"]
+        
+        aldehydes = simulation.species["OCH_prim"]
+        acids = simulation.species["HOOC_prim"]
 
 
     ScenarioData[scenario+" contours"] = pd.Panel(contour_data, 
@@ -153,11 +186,25 @@ for scenario in natsort.natsorted(files.keys()):
     mass_init = simulation.species["mass_r"][0]
     carbon_init = simulation.species["carbon_r"][0]
     
-    # Find total of functional groups
-    alcohols = simulation.species["OHCH2_prim"] + simulation.species["OHCH_alpha"] + \
-                    simulation.species["OHCH_sec"]
-    ketones = simulation.species["OC_sec"] + simulation.species["OC_alpha"]
+    # Find radial correction for alcohol species
+    simulation.calcRadialCorrection("OHCH2_prim")
+    simulation.calcRadialCorrection("OHCH_alpha")
+    simulation.calcRadialCorrection("OHCH_sec")
     
+    # Find total of alcohol groups
+    alcohols = simulation.species["OHCH2_prim_r"] + simulation.species["OHCH_alpha_r"] + \
+                    simulation.species["OHCH_sec_r"]
+                    
+    # Find radial correction for ketone species
+    simulation.calcRadialCorrection("OC_sec")
+    simulation.calcRadialCorrection("OC_alpha")
+    
+    # Find total of ketone groups
+    ketones = simulation.species["OC_sec_r"] + simulation.species["OC_alpha_r"]
+    
+    # Find radial correction for aldehydes and acids
+    simulation.calcRadialCorrection("OCH_prim")
+    simulation.calcRadialCorrection("HOOC_prim")
     
     # Add average data to data frame
     new_data = {"Triacontane (normalized)" : simulation.species["Tri_r"]/tri_init,
@@ -168,10 +215,10 @@ for scenario in natsort.natsorted(files.keys()):
                 "Average Oxygen" : simulation.species["oxygen_r"]/carbon_init*30, 
                 "H/C ratio" : simulation.species["H/C ratio"], 
                 "O/C ratio" : simulation.species["O/C ratio"],
-                "Alcohols" : alcohols*stack_vs_sphere,
-                "Ketones" : ketones*stack_vs_sphere,
-                "Aldehydes" : simulation.species["OCH_prim"]*stack_vs_sphere,
-                "Carboxyllic acids" : simulation.species["HOOC_prim"]*stack_vs_sphere}
+                "Alcohols" : alcohols,
+                "Ketones" : ketones,
+                "Aldehydes" : aldehydes,
+                "Carboxyllic acids" : acids}
 
     SimData = SimData.assign(**new_data)
     
