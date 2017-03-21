@@ -134,6 +134,42 @@ for scenario in natsort.natsorted(files.keys()):
                         simulation.species_contour["Tri"]/simulation.species_contour["Tri"][0,0],
                        "Peroxy radicals": simulation.species_contour["OO_sec"],
                        "O/C ratio": simulation.species_contour["O/C ratio"]}
+            
+        # Find radial correction for alcohol species
+        simulation.calcRadialCorrection("OHCH2_prim")
+        simulation.calcRadialCorrection("OHCH_alpha")
+        simulation.calcRadialCorrection("OHCH_sec")
+        
+        # Find total of alcohol groups
+        alcohols = simulation.species["OHCH2_prim_r"] + simulation.species["OHCH_alpha_r"] + \
+                        simulation.species["OHCH_sec_r"]
+                        
+        # Find radial correction for ketone species
+        simulation.calcRadialCorrection("OC_sec")
+        simulation.calcRadialCorrection("OC_alpha")
+        
+        # Find total of ketone groups
+        ketones = simulation.species["OC_sec_r"] + simulation.species["OC_alpha_r"]
+        
+        # Find radial correction for aldehydes and acids
+        simulation.calcRadialCorrection("OCH_prim")
+        simulation.calcRadialCorrection("HOOC_prim")
+        
+        aldehydes = simulation.species["OCH_prim_r"]
+        acids = simulation.species["HOOC_prim_r"]
+        
+        # Find radial correction for hydroperoxides
+        simulation.calcRadialCorrection("HOOCH2_prim")
+        simulation.calcRadialCorrection("HOOCH_alpha")
+        simulation.calcRadialCorrection("HOOCH_sec")
+        
+        hydroperoxides = simulation.species["HOOCH2_prim_r"] + simulation.species["HOOCH_alpha_r"] + \
+                    simulation.species["HOOCH_sec_r"]
+                    
+        # Find radial correction for peracids
+        simulation.calcRadialCorrection("HO_OOC_prim")
+        peracids = simulation.species["HO_OOC_prim"]
+            
     else:
         volume = simulation.compartments[(0,0,0)].volume
         diameter = 2*(volume*3/4/np.pi)**(1/3)/1E-7
@@ -149,11 +185,35 @@ for scenario in natsort.natsorted(files.keys()):
         contour_data = {"Triacontane (normalized)" : Tri,
                        "Peroxy radicals" : Peroxy,
                        "O/C ratio" : OC_ratio}
-
+        
+        # Find total of alcohol groups
+        alcohols = simulation.species["OHCH2_prim"] + simulation.species["OHCH_alpha"] + \
+                        simulation.species["OHCH_sec"]
+                        
+        # Find total of ketone groups
+        ketones = simulation.species["OC_sec"] + simulation.species["OC_alpha"]
+        
+        # Find total of aldehydes and acids
+        aldehydes = simulation.species["OCH_prim"]
+        acids = simulation.species["HOOC_prim"]
+        
+        # Find total of hydroperoxides and peracids
+        hydroperoxides = simulation.species["HOOCH2_prim"] + simulation.species["HOOCH_alpha"] + \
+                    simulation.species["HOOCH_sec"]
+        peracids = simulation.species["HO_OOC_prim"]
+        
+        
 
     ScenarioData[scenario+" contours"] = pd.Panel(contour_data, 
                                                   major_axis = position_vector,
                                                  minor_axis = simulation.time)
+    new_data = dict()
+    
+    for species in contour_data.keys():
+        species_df = pd.DataFrame(contour_data[species])
+        new_data[species+" COV"] = species_df.std(0)/species_df.mean(0)
+        
+    SimData = SimData.assign(**new_data)
     
     # Find initial mass and carbon amount to normalize quantities
     tri_init = simulation.species["Tri_r"][0]
@@ -180,9 +240,9 @@ for scenario in natsort.natsorted(files.keys()):
                 "Hydroperoxides" : hydroperoxides,
                 "Alcohols" : alcohols,
                 "Ketones" : ketones,
-                "Aldehydes" : simulation.species["OCH_prim"],
-                "Carboxyllic acids" : simulation.species["HOOC_prim"],
-                "Peracids" : simulation.species["HO_OOC_prim"]}
+                "Aldehydes" : aldehydes,
+                "Carboxyllic acids" : acids,
+                "Peracids" : peracids}
 
     SimData = SimData.assign(**new_data)
     
