@@ -55,10 +55,11 @@ for cond in condition:
         filename_ao = "tri_"+cond+"_ao_"+coefficient+".xml"
         files[cond+"_"+coefficient+"_ao"] = filename_ao
 
+files["night_D14_ao"] = "tri_night_ao_D14.xml"
 
 # Diffusion dictionary
 
-D_string_conv = {"SC" : "Instantaneous", "D15" : 1E-15, "D16" : 1E-16,
+D_string_conv = {"SC" : "Instantaneous", "D14" : 1E-14, "D15" : 1E-15, "D16" : 1E-16,
                 "D17" : 1E-17, "D18" : 8.39E-19}
 
 # Convenience function - see StackSim.py or Postprocessing.ipynb for details on how the simulation data is processed.
