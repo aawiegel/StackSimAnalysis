@@ -124,6 +124,7 @@ for scenario in natsort.natsorted(files.keys()):
         last_cmpt = simulation.compartments[(0, simulation.num_rows-1, 0)]
         diameter = 2*(last_cmpt.positions["y"]+last_cmpt.dimensions["y"])/1E-7
         
+        
         # Calculate contour maps for each species
         simulation.calcContourInterpolated("Tri", reverse_axis = True)
         simulation.calcContourInterpolated("OO_sec", reverse_axis = True)
@@ -135,6 +136,15 @@ for scenario in natsort.natsorted(files.keys()):
                         simulation.species_contour["Tri"]/simulation.species_contour["Tri"][0,0],
                        "Peroxy radicals": simulation.species_contour["OO_sec"],
                        "O/C ratio": simulation.species_contour["O/C ratio"]}
+        
+        if "ao" in scenario:
+            simulation.calcContourInterpolated("O2")
+            simulation.calcContourInterpolated("ROprop")
+            simulation.calcContourInterpolated("RO2prop_ch2")
+            
+            contour_data["RO2RO2"] = simulation.species_contour["O2"]
+            contour_data["ROprop"] = simulation.species_contour["ROprop"]
+            contour_data["RO2prop_ch2"] = simulation.species_contour["RO2prop_ch2"]
             
         # Find radial correction for alcohol species
         simulation.calcRadialCorrection("OHCH2_prim")
