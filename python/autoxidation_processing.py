@@ -105,8 +105,7 @@ for scenario in natsort.natsorted(files.keys()):
     
     # Initialize data frame with time and reaction markers
     SimData = pd.DataFrame({"Time (s)" : simulation.time,
-                            "desorb" : simulation.species["desorb"],
-                            "RO2+RO2" : simulation.species["O2"]})
+                            "desorb" : simulation.species["desorb"]})
     
     # get additional markers from autoxidation simulations    
     if "ao" in scenario:
@@ -142,9 +141,37 @@ for scenario in natsort.natsorted(files.keys()):
             simulation.calcContourInterpolated("ROprop")
             simulation.calcContourInterpolated("RO2prop_ch2")
             
-            contour_data["RO2RO2"] = simulation.species_contour["O2"]
+            contour_data["RO2+RO2"] = simulation.species_contour["O2"]
             contour_data["ROprop"] = simulation.species_contour["ROprop"]
             contour_data["RO2prop_ch2"] = simulation.species_contour["RO2prop_ch2"]
+            
+            simulation.calcRadialCorrection("ROprop")
+            simulation.calcRadialCorrection("RO2prop_ch2")
+            simulation.calcRadialCorrection("RO2prop_alc")
+            simulation.calcRadialCorrection("RO2prop_ald")
+            simulation.calcRadialCorrection("RO2prop_rooh")
+            simulation.calcRadialCorrection("OHprop")
+            simulation.calcRadialCorrection("O2")
+            
+            marker_data = {"RO2+RO2" : simulation.species["O2_r"],
+                            "OHprop" : simulation.species["OHprop_r"],
+                            "ROprop" : simulation.species["ROprop_r"],
+                            "RO2prop_alc" : simulation.species["RO2prop_alc_r"],
+                            "RO2prop_ald" : simulation.species["RO2prop_ald_r"],
+                            "RO2prop_ch2" : simulation.species["RO2prop_ch2_r"],
+                            "RO2prop_rooh" : simulation.species["RO2prop_rooh_r"],
+                            "RO2prop_tot" : simulation.species["RO2prop_ch2_r"] + \
+                                            simulation.species["RO2prop_alc_r"] + \
+                                            simulation.species["RO2prop_ald_r"] + \
+                                            simulation.species["RO2prop_rooh_r"]}
+        else:
+            simulation.calcContourInterpolated("O2")
+            
+            simulation.calcRadialCorrection("O2")
+            
+            marker_data = {"RO2+RO2" : simulation.species["O2_r"]}
+        
+        SimData = SimData.assign(**marker_data)
             
         # Find radial correction for alcohol species
         simulation.calcRadialCorrection("OHCH2_prim")
@@ -196,6 +223,22 @@ for scenario in natsort.natsorted(files.keys()):
         contour_data = {"Triacontane (normalized)" : Tri,
                        "Peroxy radicals" : Peroxy,
                        "O/C ratio" : OC_ratio}
+        if "ao" in scenario:
+            marker_data = {"RO2+RO2" : simulation.species["O2"],
+                            "OHprop" : simulation.species["OHprop"],
+                            "ROprop" : simulation.species["ROprop"],
+                            "RO2prop_alc" : simulation.species["RO2prop_alc"],
+                            "RO2prop_ald" : simulation.species["RO2prop_ald"],
+                            "RO2prop_ch2" : simulation.species["RO2prop_ch2"],
+                            "RO2prop_rooh" : simulation.species["RO2prop_rooh"],
+                            "RO2prop_tot" : simulation.species["RO2prop_ch2"] + \
+                                            simulation.species["RO2prop_alc"] + \
+                                            simulation.species["RO2prop_ald"] + \
+                                            simulation.species["RO2prop_rooh"]}
+        else:
+            marker_data = {"RO2+RO2" : simulation.species["O2"]}
+        
+        SimData = SimData.assign(**marker_data)
         
         # Find total of alcohol groups
         alcohols = simulation.species["OHCH2_prim"] + simulation.species["OHCH_alpha"] + \
