@@ -137,9 +137,9 @@ for scenario in natsort.natsorted(files.keys()):
                        "O/C ratio": simulation.species_contour["O/C ratio"]}
         
         if "ao" in scenario:
-            simulation.calcContourInterpolated("O2")
-            simulation.calcContourInterpolated("ROprop")
-            simulation.calcContourInterpolated("RO2prop_ch2")
+            simulation.calcContourInterpolated("O2", reverse_axis = True)
+            simulation.calcContourInterpolated("ROprop", reverse_axis = True)
+            simulation.calcContourInterpolated("RO2prop_ch2", reverse_axis = True)
             
             contour_data["RO2+RO2"] = simulation.species_contour["O2"]
             contour_data["ROprop"] = simulation.species_contour["ROprop"]
@@ -165,9 +165,11 @@ for scenario in natsort.natsorted(files.keys()):
                                             simulation.species["RO2prop_ald_r"] + \
                                             simulation.species["RO2prop_rooh_r"]}
         else:
-            simulation.calcContourInterpolated("O2")
+            simulation.calcContourInterpolated("O2", reverse_axis = True)
             
             simulation.calcRadialCorrection("O2")
+            
+            contour_data["RO2+RO2"] = simulation.species_contour["O2"]
             
             marker_data = {"RO2+RO2" : simulation.species["O2_r"]}
         
