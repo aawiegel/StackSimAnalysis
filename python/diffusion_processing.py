@@ -185,26 +185,7 @@ for scenario in natsort.natsorted(files.keys()):
     tri_init = simulation.species["Tri_r"][0]
     mass_init = simulation.species["mass_r"][0]
     carbon_init = simulation.species["carbon_r"][0]
-    
-    # Find radial correction for alcohol species
-    simulation.calcRadialCorrection("OHCH2_prim")
-    simulation.calcRadialCorrection("OHCH_alpha")
-    simulation.calcRadialCorrection("OHCH_sec")
-    
-    # Find total of alcohol groups
-    alcohols = simulation.species["OHCH2_prim_r"] + simulation.species["OHCH_alpha_r"] + \
-                    simulation.species["OHCH_sec_r"]
-                    
-    # Find radial correction for ketone species
-    simulation.calcRadialCorrection("OC_sec")
-    simulation.calcRadialCorrection("OC_alpha")
-    
-    # Find total of ketone groups
-    ketones = simulation.species["OC_sec_r"] + simulation.species["OC_alpha_r"]
-    
-    # Find radial correction for aldehydes and acids
-    simulation.calcRadialCorrection("OCH_prim")
-    simulation.calcRadialCorrection("HOOC_prim")
+
     
     # Add average data to data frame
     new_data = {"Triacontane (normalized)" : simulation.species["Tri_r"]/tri_init,
