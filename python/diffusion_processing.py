@@ -203,6 +203,16 @@ for scenario in natsort.natsorted(files.keys()):
 
     SimData = SimData.assign(**new_data)
     
+    # COV data
+    
+    new_data = dict()
+  
+    for species in contour_data.keys():
+        species_df = pd.DataFrame(contour_data[species])
+        new_data[species+" COV"] = species_df.std(axis = 0)/species_df.mean(axis = 0)  
+    
+    SimData = SimData.assign(**new_data)
+    
     # Generate carbon list
     
     carbon_list = ["nC"+str(i) for i in range(2, 31)]
